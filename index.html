@@ -18,15 +18,14 @@
     <script src="script.js?v=20260925-2" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#top">
+      본분 바로가기
+    </a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="#top" aria-label="Re:hear 맨 위로"
-          ><img
-            src="assets/images/rehear-wordmark.png"
-            alt="Re:hear"
-            width="512"
-            height="512"
-        /></a>
+        <a class="brand" href="#top" aria-label="Re:hear 맨 위로">
+          <img src="assets/images/rehear-wordmark.png" alt="Re:hear" width="512" height="124">
+        </a>
 
         <button
           id="menu-toggle"
@@ -56,7 +55,7 @@
       </div>
     </header>
 
-    <main id="top">
+    <main id="top" tabindex="-1">
       <section class="hero container" aria-labelledby="hero-title">
         <div class="hero-copy">
           <p class="eyebrow">Practice. Feedback. Real Growth.</p>
@@ -78,10 +77,8 @@
         <figure class="hero-image">
           <img
             src="assets/images/service.png"
-            alt="가상 청중 앞에서 발표를 연습하는 장면"
-            width="1920"
-            height="1080"
-          />
+            alt="가상 회의실에서 여섯 명의 청중을 마주하고 발표를 연습하는 장면"
+            width="1920" height="1080">
           <figcaption>Re:hear 서비스 콘셉트 이미지</figcaption>
         </figure>
       </section>
@@ -159,12 +156,8 @@
                   aria-describedby="title-help title-count title-error"
                 />
                 <div class="field-meta">
-                  <p id="title-help" class="field-help">
-                    2자이상 최대 60자까지 입력할 수 있습니다.
-                  </p>
-                  <p id="title-count" class="field-count" aria-live="polite">
-                    0 / 60자
-                  </p>
+                  <p id="title-help" class="field-help">2자이상 최대 60자까지 입력할 수 있습니다.</p>
+                  <p id="title-count" class="field-count" aria-live="polite">0 / 60자</p>
                 </div>
                 <p id="title-error" class="field-error" role="alert"></p>
               </div>
@@ -425,10 +418,7 @@
           id="dialog-close"
           class="icon-button"
           type="button"
-          aria-label="닫기"
-        >
-          ×
-        </button>
+          aria-label="계획 상세 닫기">×</button>
       </div>
       <h2 id="dialog-title"></h2>
       <p id="dialog-status" class="dialog-status"></p>

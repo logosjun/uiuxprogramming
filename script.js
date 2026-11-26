@@ -150,6 +150,16 @@ function updateSummary() {
   document.querySelector('#summary-qna').textContent = qnaText(values);
 }
 
+function setSubmitState(state, message) {
+  isSubmitting = state === "loading";
+  form.setAttribute("aria-busy", String(isSubmitting));
+  saveButton.disabled = isSubmitting;
+  saveButton.textContent = isSubmitting ? "저장하는 중..." : "계획 저장하기 ->";
+  submitStatus.textContent = message;
+  submitStatus.classList.toggle("is-success", state === "success");
+  submitStatus.classList.toggle("has-error", state === "error");
+}
+
 titleInput.addEventListener('input', () => {
   if (titleInput.getAttribute('aria-invalid') === 'true') {
     validateTitle();
@@ -258,6 +268,10 @@ function updateCurrentNav() {
       link.removeAttribute('aria-current');
     }
   });
+
+  const currentLink = document.querySelector('.main-nav a[aria-current="page"]');
+  const pageName = currentLink ? currentLink.textContent.trim() : "홈";
+  document.title = pageName + " | Re:hear";
 }
 
 window.addEventListener('hashchange', updateCurrentNav);
@@ -268,6 +282,15 @@ menuToggle.addEventListener("click", () => {
 
   menuToggle.textContent = isOpen ? "메뉴 닫기" : "메뉴 열기";
   menuToggle.setAttribute("aria-expanded", String(isOpen));
+});
+
+document.addEventListener("keydown", (event) => {
+  if(event.key !== "Escape" || !mainNav.classList.contains("is-open")) return;
+
+  mainNav.classList.remove("is-open");
+  menuToggle.textContent = "메뉴 열기";
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.forcus();
 });
 
 navLinks.forEach((link) => {
@@ -305,7 +328,9 @@ function renderPlans() {
     emptyDescription.textContent = filtered
       ? '다른 상태를 선택해 보세요'
       : '첫 발표 훈력 계획을 만들면 이곳에서 다시 볼 수 있습닏다.';
-    emptyAction.hidden = filtered;
+    emptyAction.hidden = false;
+    emptyAction.textContent = filtered ? "전체 보기" : "계획 만들러 가기";
+    emptyAction.href = filtered ? "#archive":"#planner";
   }
 
   planCount.textContent = String(visiblePlans.length);
@@ -379,8 +404,22 @@ filterButtons.forEach((button) => {
       item.setAttribute('aria-pressed', String(selected));
     });
     renderPlans();
-  });
+
+    const count = getFilteredPlans().length;
+    const filterName = button.textContent.trim();
+    archiveStatus.textContent = count > 0
+      ? `${filterName} 계획 ${count}개가 표시됩니다.`
+      : `${filterName} 계획이 없습니다. 다른 조건을 선택해 보세요.`;    
+    });
 });
+
+emptyState.querySelector("a").addEventListener("click", (event) => {
+  if (currentFilter === "all") return;
+  event.preventDefault();
+  const allButton = document.querySelector('[data-filter="all"]');
+  allButton.click();
+  allButton.focus();
+})
 
 planList.addEventListener('click', (event) => {
   const button = event.target.closest('button[data-action]');
@@ -409,10 +448,11 @@ planList.addEventListener('click', (event) => {
   archiveStatus.textContent = persisted
     ? `‘${plan.title}’ 계획을 ${wasCancelled ? '다시 사용할 수 있습니다' : '취소했습니다'}.`
     : '상태를 현재 화면에서 바꿨지만, 브라우저 저장 공간을 사용할 수 없어 새로고침하면 사라질 수 있습니다.';
-  const nextButton = [
-    ...planList.querySelectorAll('button[data-action="toggle"]'),
-  ].find((item) => item.dataset.id === plan.id);
-  nextButton?.focus();
+  const nextButton = [...planList.querySelectorAll('button[data-action="toggle"]'),].find((item) => item.dataset.id === plan.id);
+  const selectedFilter = document.querySelector(
+    '.filter-button[aria-pressed="true"]'
+  );
+  (nextButton || selectedFilter)?.focus();
 });
 
 document
@@ -427,6 +467,12 @@ themeButton.addEventListener('click', () => {
   const dark = document.body.classList.toggle('dark');
   themeButton.textContent = dark ? '라이트 모드' : '다크 모드';
   themeButton.setAttribute('aria-pressed', String(dark));
+});
+
+document.querySelector('.brand').addEventListener('click', (e) => {
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  history.pushState(null, '', '#top'); // 또는 location.hash = ''
 });
 
 renderPlans();
